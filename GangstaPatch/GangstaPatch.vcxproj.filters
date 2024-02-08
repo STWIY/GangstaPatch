@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Project Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Project Files\3rdParty">
+      <UniqueIdentifier>{8ca15529-d3b0-424d-8934-a434484f3e53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Core">
+      <UniqueIdentifier>{d09a7281-45ca-40b9-9a55-c062e7a548c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Hooks">
+      <UniqueIdentifier>{91088e9a-0d23-4ec5-8f3a-c68c92a57d32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Hooks\pure3d">
+      <UniqueIdentifier>{53dc40cf-fb0a-4108-85bc-1fc2900aeb94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Hooks\script">
+      <UniqueIdentifier>{be1af75d-b8ab-44ce-8375-0740c37cf850}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cc">
+      <Filter>Project Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="3rdParty\MinHook.h">
+      <Filter>Project Files\3rdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Settings.hh">
+      <Filter>Project Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Patcher.hh">
+      <Filter>Project Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\Registry.hh">
+      <Filter>Project Files\Hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\pure3d\D3DDisplay.hh">
+      <Filter>Project Files\Hooks\pure3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks\script\ListScreenResolutionEntries.hh">
+      <Filter>Project Files\Hooks\script</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
