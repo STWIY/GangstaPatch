@@ -22,11 +22,39 @@
 //==========================================================================
 // Patches
 
+#define HEAP_VALIDATE_ALL_ENABLED       0x20000000
+#define HEAP_CAPTURE_STACK_BACKTRACES   0x08000000
+#define RTLDEBUGCREATEHEAP_HEAP_FLAGS   (HEAP_TAIL_CHECKING_ENABLED | HEAP_FREE_CHECKING_ENABLED | 0x10000000)
+#define NTGLOBALFLAGS_HEAP_FLAGS        (HEAP_DISABLE_COALESCE_ON_FREE | HEAP_FREE_CHECKING_ENABLED | HEAP_TAIL_CHECKING_ENABLED | HEAP_VALIDATE_ALL_ENABLED | 0x40000000 | HEAP_CAPTURE_STACK_BACKTRACES)
+#define HEAP_CLEARABLE_FLAGS            (RTLDEBUGCREATEHEAP_HEAP_FLAGS | NTGLOBALFLAGS_HEAP_FLAGS)
+#define HEAP_VALID_FORCE_FLAGS          (HEAP_NO_SERIALIZE | HEAP_GENERATE_EXCEPTIONS | HEAP_ZERO_MEMORY | HEAP_REALLOC_IN_PLACE_ONLY | 0x40000000 | HEAP_VALIDATE_ALL_ENABLED | HEAP_TAIL_CHECKING_ENABLED | HEAP_CREATE_ALIGN_16 | HEAP_FREE_CHECKING_ENABLED)
+#define HEAP_CLEARABLE_FORCE_FLAGS      (HEAP_CLEARABLE_FLAGS & HEAP_VALID_FORCE_FLAGS)
+
+void PEBHeapFlags()
+{
+    char* peb = (char*)__readfsdword(0x30);
+
+    DWORD numOfHeaps = *(int*)(peb + 0x88);
+
+    for (DWORD i = 0; i < numOfHeaps; ++i)
+    {
+        char* heap = (char*)(*(DWORD***)(peb + 0x90))[i];
+
+        auto flags = (DWORD*)(heap + 0x40);
+        auto force_flags = (DWORD*)(heap + 0x44);
+
+        *flags &= ~HEAP_CLEARABLE_FLAGS;
+        *force_flags &= ~HEAP_CLEARABLE_FORCE_FLAGS;
+    }
+}
+
 void InitializePatches()
 {
     // Prevent game setting affinity to 1 core.
-    //CorePatcher::NopBytes(0x6DF1F6, 5);
+    CorePatcher::NopBytes(0x6DF1F6, 5);
+
     // FIX-ME: Causes profile dialog have missing text and button options...
+    PEBHeapFlags();
 
     // Fix vertexes been broken when using D3DLOCK_DISCARD, is better to force both flags to prevent cpu spin-lock...
     CorePatcher::ApplyDWORD(0x703A20, (D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE));
