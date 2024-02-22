@@ -25,14 +25,58 @@
 void InitializePatches()
 {
     // Prevent game setting affinity to 1 core.
-    //CorePatcher::NopBytes(0x6DF1F6, 5);
-    // FIX-ME: Causes profile dialog have missing text and button options...
+    CorePatcher::NopBytes(0x6DF1F6, 5);
 
     // Fix vertexes been broken when using D3DLOCK_DISCARD, is better to force both flags to prevent cpu spin-lock...
     CorePatcher::ApplyDWORD(0x703A20, (D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE));
 
     // Remove `D3DCREATE_MULTITHREADED` since D3D runs in single threaded anyway and it might degrade performance...
     CorePatcher::ApplyBytes(0x654965, { uint8_t(D3DCREATE_HARDWARE_VERTEXPROCESSING) });
+
+    // Modify NtGlobalFlag
+    {
+        DWORD _Peb = __readfsdword(0x30);
+
+        //==========================
+        // Remove Heap Flags:
+        // - FLG_HEAP_VALIDATE_PARAMETERS | FLG_HEAP_ENABLE_FREE_CHECK | FLG_HEAP_ENABLE_TAIL_CHECK
+
+        *reinterpret_cast<ULONG*>(_Peb + 0x68) &= ~(0x00000040 | 0x00000020 | 0x00000010);
+    }
+
+    // Modify Heap Flags
+    {
+        DWORD _NumHeaps = GetProcessHeaps(0, 0);
+        if (_NumHeaps)
+        {
+            HANDLE* _Heaps = new HANDLE[_NumHeaps];
+
+            if (GetProcessHeaps(_NumHeaps, _Heaps))
+            {
+                for (DWORD i = 0; _NumHeaps > i; ++i)
+                {
+                    uintptr_t _Heap = reinterpret_cast<uintptr_t>(_Heaps[i]);
+
+                    //==========================
+                    // Remove Flags:
+                    // - HEAP_VALIDATE_PARAMETERS_ENABLED | HEAP_FREE_CHECKING_ENABLED | HEAP_TAIL_CHECKING_ENABLED
+
+                    *reinterpret_cast<ULONG*>(_Heap + 0x40) &= ~(0x40000000 | 0x00000040 | 0x00000020);
+
+                    //==========================
+                    // Remove (Force Flags)
+
+                    *reinterpret_cast<ULONG*>(_Heap + 0x44) = 0;
+                }
+            }
+
+            delete[] _Heaps;
+        }
+    }
+
+    if (s_CoreSettings.GetInteger("Scarface", "ShowFPS")) {
+        CorePatcher::NopBytes(0x658E6A, 2);
+    }
 }
 
 //==========================================================================
