@@ -9,10 +9,12 @@ namespace pure3dHook
 
 		bool __fastcall InitDisplay(pure3d::d3dDisplay* p_Display, void* edx, pure3d::pddiDisplayInit* p_Init)
 		{
-			p_Init->displayMode = (s_CoreSettings.m_Windowed.m_Mode == CoreSettings::Windowed_t::eMode_None ? pure3d::PDDI_DISPLAY_FULLSCREEN : pure3d::PDDI_DISPLAY_WINDOW);
+			auto _WindowedMode = static_cast<CoreSettings::eWindowedMode>(CoreSettings::GetInteger("Windowed", "Mode"));
+
+			p_Init->displayMode = (_WindowedMode == CoreSettings::eWindowedMode_None ? pure3d::PDDI_DISPLAY_FULLSCREEN : pure3d::PDDI_DISPLAY_WINDOW);
 			if (g_InitDisplay(p_Display, p_Init))
 			{
-				if (s_CoreSettings.m_Windowed.m_Mode == CoreSettings::Windowed_t::eMode_Borderless) {
+				if (_WindowedMode == CoreSettings::eWindowedMode_Borderless) {
 					SetWindowLongA(p_Display->hWnd, GWL_STYLE, WS_POPUP);
 				}
 				return true;

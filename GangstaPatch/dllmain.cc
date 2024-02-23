@@ -74,8 +74,12 @@ void InitializePatches()
         }
     }
 
-    if (s_CoreSettings.GetInteger("Scarface", "ShowFPS")) {
+    if (CoreSettings::GetInteger("Scarface", "ShowFPS")) {
         CorePatcher::NopBytes(0x658E6A, 2);
+    }
+
+    if (CoreSettings::GetInteger("Scarface", "SkipMovies")) {
+        CorePatcher::NopBytes(0x4F61F0, 5);
     }
 }
 
@@ -135,8 +139,6 @@ int __stdcall DllMain(HMODULE p_Module, DWORD p_Reason, void* p_Reserved)
                 }
             }
         }
-
-        s_CoreSettings.Initialize();
 
         CorePatcher::s_VirtualProtect = reinterpret_cast<decltype(&VirtualProtect)>(MH_GetVirtualProtect());
 
