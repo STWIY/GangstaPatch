@@ -12,8 +12,9 @@
 ## Ini Settings
 ```ini
 [Scarface]
-ShowFPS=0	; When set to 1 it will show FPS at left corner.
-SkipMovies=0	; When set to 1 it will skip intro movies while starting up game.
+ShowFPS=0	            ; When set to 1 it will show FPS at left corner.
+SkipLicenseScreen=0	    ; When set to 1 it will skip license screen while starting up game.
+SkipMovies=0	        ; When set to 1 it will skip intro movies while starting up game.
 
 [Windowed]
 Mode=0	; 0: None, 1: Windowed, 2: Windowed Borderless

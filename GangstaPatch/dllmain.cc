@@ -78,6 +78,10 @@ void InitializePatches()
         CorePatcher::NopBytes(0x658E6A, 2);
     }
 
+    if (CoreSettings::GetInteger("Scarface", "SkipLicenseScreen")) {
+        *reinterpret_cast<float*>(0x8234CC) = 3000.f;
+    }
+
     if (CoreSettings::GetInteger("Scarface", "SkipMovies")) {
         CorePatcher::NopBytes(0x4F61F0, 5);
     }
