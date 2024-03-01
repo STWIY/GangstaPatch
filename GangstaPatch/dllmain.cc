@@ -85,6 +85,11 @@ void InitializePatches()
     if (CoreSettings::GetInteger("Scarface", "SkipMovies")) {
         CorePatcher::NopBytes(0x4F61F0, 5);
     }
+
+    if (CoreSettings::GetInteger("Scarface", "DebugMenu")) {
+        *reinterpret_cast<bool*>(0x7C1C54) = false;
+        *reinterpret_cast<bool*>(0x7C1C55) = false;
+    }
 }
 
 //==========================================================================
