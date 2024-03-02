@@ -17,5 +17,8 @@ SkipLicenseScreen=0	    ; When set to 1 it will skip license screen while starti
 SkipMovies=0	        ; When set to 1 it will skip intro movies while starting up game.
 
 [Windowed]
-Mode=0	; 0: None, 1: Windowed, 2: Windowed Borderless
+Mode=0	                ; 0: None, 1: Windowed, 2: Windowed Borderless
+
+[Patch]
+AffinityMode=0          ; 0: None, 1: All besides core 0 (Might improve performance on Hyper-threaded CPU), 2: Game Handled (Default)
 ```
