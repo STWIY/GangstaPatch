@@ -182,6 +182,7 @@
     <ClInclude Include="Core\Patcher.hh" />
     <ClInclude Include="Core\Settings.hh" />
     <ClInclude Include="Hooks\pure3d\D3DDisplay.hh" />
+    <ClInclude Include="Hooks\pure3d\OceanRenderer.hh" />
     <ClInclude Include="Hooks\Registry.hh" />
     <ClInclude Include="Hooks\script\ListScreenResolutionEntries.hh" />
   </ItemGroup>

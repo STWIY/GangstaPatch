@@ -17,6 +17,7 @@
 //==========================================================================
 // Core
 
+static decltype(&VirtualProtect) g_VirtualProtect;
 #include "Core/Patcher.hh"
 #include "Core/Settings.hh"
 
@@ -40,7 +41,7 @@ void InitializePatches()
 
             if (_SystemInfo.dwNumberOfProcessors > 2)
             {
-                DWORD_PTR _AffinityMask;
+                DWORD_PTR _AffinityMask = 0;
                 for (DWORD i = 1; _SystemInfo.dwNumberOfProcessors > i; ++i) {
                     _AffinityMask |= (1 << i);
                 }
@@ -54,6 +55,15 @@ void InitializePatches()
 
     // Remove `D3DCREATE_MULTITHREADED` since D3D runs in single threaded anyway and it might degrade performance...
     CorePatcher::ApplyBytes(0x654965, { uint8_t(D3DCREATE_HARDWARE_VERTEXPROCESSING) });
+
+    //=============================================================
+    // FPS Patches
+    
+    // Ocean (Animation)
+    CorePatcher::ApplyBytes(0x6A0B85, { 0xEB, 0x27 });
+
+    //=============================================================
+    // Configurable Patches
 
     if (CoreSettings::GetInteger("Scarface", "ShowFPS")) {
         CorePatcher::NopBytes(0x658E6A, 2);
@@ -77,14 +87,37 @@ void InitializePatches()
 //==========================================================================
 // Hooks
 
-#include "Hooks/script/ListScreenResolutionEntries.hh"
+// pure3d
 #include "Hooks/pure3d/D3DDisplay.hh"
+#include "Hooks/pure3d/OceanRenderer.hh"
+
+// script
+#include "Hooks/script/ListScreenResolutionEntries.hh"
+
+// game
 #include "Hooks/Registry.hh"
 
 template <typename H, typename O = void*>
 __forceinline void AddHook(uintptr_t p_Address, H p_Hook, O* p_Original = nullptr)
 {
     MH_CreateHook(reinterpret_cast<void*>(p_Address), reinterpret_cast<void*>(p_Hook), reinterpret_cast<void**>(p_Original));
+}
+
+template <typename H, typename O = void*>
+void AddVFuncHook(uintptr_t p_Address, H p_Hook, O* p_Original = nullptr)
+{
+    if (p_Original) {
+        *reinterpret_cast<void**>(p_Original) = *reinterpret_cast<void**>(p_Address);
+    }
+
+    DWORD _OldProtection;
+    if (!g_VirtualProtect(reinterpret_cast<void*>(p_Address), sizeof(void*), PAGE_READWRITE, &_OldProtection)) {
+        return;
+    }
+
+    *reinterpret_cast<void**>(p_Address) = reinterpret_cast<void*>(p_Hook);
+
+    g_VirtualProtect(reinterpret_cast<void*>(p_Address), sizeof(void*), _OldProtection, &_OldProtection);
 }
 
 void InitializeHooks()
@@ -96,12 +129,12 @@ void InitializeHooks()
 
     // pure3d
     AddHook(0x6545D0, pure3dHook::D3DDisplay::InitDisplay, &pure3dHook::D3DDisplay::g_InitDisplay);
+    AddVFuncHook(0x76B790, pure3dHook::OceanRender::UnknownUpdate, &pure3dHook::OceanRender::g_UnknownUpdate);
 
     // Registry
     AddHook(0x456FD0, RegistryHook::SetInteger);
     AddHook(0x457090, RegistryHook::GetInteger);
 }
-
 
 //==========================================================================
 // Fixes
@@ -179,7 +212,7 @@ int __stdcall DllMain(HMODULE p_Module, DWORD p_Reason, void* p_Reserved)
             }
         }
 
-        CorePatcher::s_VirtualProtect = reinterpret_cast<decltype(&VirtualProtect)>(MH_GetVirtualProtect());
+        g_VirtualProtect = reinterpret_cast<decltype(&VirtualProtect)>(MH_GetVirtualProtect());
 
         InitializePatches();
         InitializeHooks();
