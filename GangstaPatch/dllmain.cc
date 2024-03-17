@@ -62,6 +62,10 @@ void InitializePatches()
     // Ocean (Animation)
     CorePatcher::ApplyBytes(0x6A0B85, { 0xEB, 0x27 });
 
+    // Animation (Test)
+    // - Seems to pass (16ms) as min limit which would be fine for 60 FPS, but running game at higher FPS will cause animations to play at faster speed.
+    CorePatcher::ApplyBytes(0x40D723, { 0x30 }); // Patches float address to other float address which is small enough for 1000+ FPS
+
     //=============================================================
     // Configurable Patches
 
