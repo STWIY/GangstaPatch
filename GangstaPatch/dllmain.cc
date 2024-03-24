@@ -64,7 +64,13 @@ void InitializePatches()
 
     // Animation (Test)
     // - Seems to pass (16ms) as min limit which would be fine for 60 FPS, but running game at higher FPS will cause animations to play at faster speed.
-    CorePatcher::ApplyBytes(0x40D723, { 0x30 }); // Patches float address to other float address which is small enough for 1000+ FPS
+    CorePatcher::ApplyByte(0x40D723, 0x30); // Patches float address to other float address which is small enough for 1000+ FPS
+
+    //=============================================================
+    // ActiveMARK (DRM) Patches
+
+    // Prevent initializing internet stuff & wont load rasapi32.dll (More info: https://learn.microsoft.com/en-us/windows/win32/api/_rras/)
+    CorePatcher::ApplyBytes(0x974395, { 0xB0, 0x01, 0xC3 });
 
     //=============================================================
     // Configurable Patches

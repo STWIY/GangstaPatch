@@ -5,7 +5,7 @@ namespace CorePatcher
 {
     //==============================================================
 
-    __forceinline bool ApplyDWORD(uintptr_t p_Address, DWORD p_Value)
+    bool ApplyDWORD(uintptr_t p_Address, DWORD p_Value)
     {
         DWORD _OldProtection;
         if (!g_VirtualProtect(reinterpret_cast<void*>(p_Address), sizeof(DWORD), PAGE_EXECUTE_READWRITE, &_OldProtection)) {
@@ -20,23 +20,28 @@ namespace CorePatcher
 
     //==============================================================
 
-    __forceinline bool ApplyBytes(uintptr_t p_Address, std::initializer_list<uint8_t> _InitializerList)
+    bool ApplyBytes(uintptr_t p_Address, std::initializer_list<uint8_t> p_InitializerList)
     {
-        size_t _Size = _InitializerList.size();
+        size_t _Size = p_InitializerList.size();
 
         DWORD _OldProtection;
         if (!g_VirtualProtect(reinterpret_cast<void*>(p_Address), _Size, PAGE_EXECUTE_READWRITE, &_OldProtection)) {
             return false;
         }
 
-        memcpy(reinterpret_cast<void*>(p_Address), _InitializerList.begin(), _Size);
+        memcpy(reinterpret_cast<void*>(p_Address), p_InitializerList.begin(), _Size);
         g_VirtualProtect(reinterpret_cast<void*>(p_Address), _Size, _OldProtection, &_OldProtection);
         return true;
     }
 
+    __forceinline bool ApplyByte(uintptr_t p_Address, uint8_t p_Byte)
+    {
+        return ApplyBytes(p_Address, { p_Byte });
+    }
+
     //==============================================================
 
-    __forceinline bool NopBytes(uintptr_t p_Address, size_t p_NumBytes)
+    bool NopBytes(uintptr_t p_Address, size_t p_NumBytes)
     {
         DWORD _OldProtection;
         if (!g_VirtualProtect(reinterpret_cast<void*>(p_Address), p_NumBytes, PAGE_EXECUTE_READWRITE, &_OldProtection)) {
