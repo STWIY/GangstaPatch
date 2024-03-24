@@ -86,12 +86,6 @@ void InitializePatches()
     if (CoreSettings::GetInteger("Scarface", "SkipMovies")) {
         CorePatcher::NopBytes(0x4F61F0, 5);
     }
-
-    if (CoreSettings::GetInteger("Scarface", "DebugMenu")) 
-    {
-        *reinterpret_cast<bool*>(0x7C1C54) = false; // gReleaseMode
-        *reinterpret_cast<bool*>(0x7C1C55) = false; // gFinalMode 
-    }
 }
 
 //==========================================================================
@@ -144,6 +138,24 @@ void InitializeHooks()
     // Registry
     AddHook(0x456FD0, RegistryHook::SetInteger);
     AddHook(0x457090, RegistryHook::GetInteger);
+}
+
+//==========================================================================
+// Globals
+
+void InitializeGlobals()
+{
+    // Disable hide cursor (Let DInput handle cursor)
+    *reinterpret_cast<bool*>(0x7BF728) = false;
+
+    //=============================================================
+    // Configurable Globals
+
+    if (CoreSettings::GetInteger("Scarface", "DebugMenu"))
+    {
+        *reinterpret_cast<bool*>(0x7C1C54) = false; // gReleaseMode
+        *reinterpret_cast<bool*>(0x7C1C55) = false; // gFinalMode 
+    }
 }
 
 //==========================================================================
@@ -226,6 +238,7 @@ int __stdcall DllMain(HMODULE p_Module, DWORD p_Reason, void* p_Reserved)
 
         InitializePatches();
         InitializeHooks();
+        InitializeGlobals();
         InitializeFixes();
     }
 
