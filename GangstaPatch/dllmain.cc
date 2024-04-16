@@ -56,6 +56,9 @@ void InitializePatches()
     // Remove `D3DCREATE_MULTITHREADED` since D3D runs in single threaded anyway and it might degrade performance...
     CorePatcher::ApplyBytes(0x654965, { uint8_t(D3DCREATE_HARDWARE_VERTEXPROCESSING) });
 
+    // Character Camera - Disable blending.
+    CorePatcher::ApplyBytes(0x5636F6, { 0xE9, 0x4E, 0x01, 0x00, 0x00 });
+
     //=============================================================
     // FPS Patches
     
