@@ -52,4 +52,24 @@ namespace CorePatcher
         g_VirtualProtect(reinterpret_cast<void*>(p_Address), p_NumBytes, _OldProtection, &_OldProtection);
         return true;
     }
+
+    //==============================================================
+    // p_Address -> E8 (Call) / E9 (Jump)
+
+    template <typename T>
+    bool JmpRel32(uintptr_t p_Address, T p_Target)
+    {
+        uintptr_t _JmpOffset = (reinterpret_cast<uintptr_t>(p_Target) - p_Address - 5);
+        void* _PatchAddress = reinterpret_cast<void*>(p_Address + 0x1);
+
+        DWORD _OldProtection;
+        if (!g_VirtualProtect(_PatchAddress, sizeof(void*), PAGE_EXECUTE_READWRITE, &_OldProtection)) {
+            return false;
+        }
+
+        *reinterpret_cast<uintptr_t*>(_PatchAddress) = _JmpOffset;
+        g_VirtualProtect(_PatchAddress, sizeof(void*), _OldProtection, &_OldProtection);
+
+        return true;
+    }
 };

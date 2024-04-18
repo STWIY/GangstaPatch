@@ -22,6 +22,11 @@ static decltype(&VirtualProtect) g_VirtualProtect;
 #include "Core/Settings.hh"
 
 //==========================================================================
+// Naked Functions
+
+#include "NakedFunctions/GetBarrelCreepSideMax.hh"
+
+//==========================================================================
 // Patches
 
 void InitializePatches()
@@ -58,6 +63,9 @@ void InitializePatches()
 
     // Character Camera - Disable blending.
     CorePatcher::ApplyBytes(0x5636F6, { 0xE9, 0x4E, 0x01, 0x00, 0x00 });
+
+    // Character Camera - Rattle Fix for BarrelCreep Side (Max value)
+    CorePatcher::JmpRel32(0x563CB2, WeaponStateProp::GetBarrelCreepSideMax);
 
     //=============================================================
     // FPS Patches

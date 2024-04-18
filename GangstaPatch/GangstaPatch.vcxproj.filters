@@ -20,6 +20,9 @@
     <Filter Include="Project Files\Hooks\script">
       <UniqueIdentifier>{be1af75d-b8ab-44ce-8375-0740c37cf850}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Project Files\NakedFunctions">
+      <UniqueIdentifier>{dc2b803b-53a9-447e-822a-44bd18dd4126}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cc">
@@ -47,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="Hooks\pure3d\OceanRenderer.hh">
       <Filter>Project Files\Hooks\pure3d</Filter>
+    </ClInclude>
+    <ClInclude Include="NakedFunctions\GetBarrelCreepSideMax.hh">
+      <Filter>Project Files\NakedFunctions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
