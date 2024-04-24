@@ -9,6 +9,10 @@
 #include <SDK/.SDK.hh>
 
 //==========================================================================
+
+#include "Shader/VehicleDamage.hh"
+
+//==========================================================================
 // Libs
 
 #include "3rdParty/MinHook.h"
@@ -105,6 +109,7 @@ void InitializePatches()
 // pure3d
 #include "Hooks/pure3d/D3DDisplay.hh"
 #include "Hooks/pure3d/OceanRenderer.hh"
+#include "Hooks/pure3d/VehicleShader.hh"
 
 // script
 #include "Hooks/script/ListScreenResolutionEntries.hh"
@@ -145,6 +150,7 @@ void InitializeHooks()
     // pure3d
     AddHook(0x6545D0, pure3dHook::D3DDisplay::InitDisplay, &pure3dHook::D3DDisplay::g_InitDisplay);
     AddVFuncHook(0x76B790, pure3dHook::OceanRender::UnknownUpdate, &pure3dHook::OceanRender::g_UnknownUpdate);
+    AddVFuncHook(0x774D3C, pure3dHook::VehicleShader::UnknownRender, &pure3dHook::VehicleShader::g_UnknownRender);
 
     // Registry
     AddHook(0x456FD0, RegistryHook::SetInteger);
@@ -214,6 +220,12 @@ void InitializeFixes()
             delete[] _Heaps;
         }
     }
+
+    //=============================================================
+    // Vehicle windows (Damage)
+
+    CorePatcher::NopBytes(0x7080C6, 2);
+    memcpy(reinterpret_cast<void*>(0x7FC330), g_VehicleDamageShader, sizeof(g_VehicleDamageShader));
 }
 
 //==========================================================================
