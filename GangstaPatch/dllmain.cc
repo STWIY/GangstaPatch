@@ -60,7 +60,7 @@ void InitializePatches()
     }
 
     // Fix vertexes been broken when using D3DLOCK_DISCARD, is better to force both flags to prevent cpu spin-lock...
-    CorePatcher::ApplyDWORD(0x703A20, (D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE));
+    CorePatcher::ApplyType<DWORD>(0x703A20, (D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE));
 
     // Remove `D3DCREATE_MULTITHREADED` since D3D runs in single threaded anyway and it might degrade performance...
     CorePatcher::ApplyBytes(0x654965, { uint8_t(D3DCREATE_HARDWARE_VERTEXPROCESSING) });
@@ -123,21 +123,19 @@ __forceinline void AddHook(uintptr_t p_Address, H p_Hook, O* p_Original = nullpt
     MH_CreateHook(reinterpret_cast<void*>(p_Address), reinterpret_cast<void*>(p_Hook), reinterpret_cast<void**>(p_Original));
 }
 
-template <typename H, typename O = void*>
-void AddVFuncHook(uintptr_t p_Address, H p_Hook, O* p_Original = nullptr)
+void AddVFuncHook(uintptr_t p_Address, void* p_Hook, void** p_Original = nullptr)
 {
     if (p_Original) {
         *reinterpret_cast<void**>(p_Original) = *reinterpret_cast<void**>(p_Address);
     }
 
-    DWORD _OldProtection;
-    if (!g_VirtualProtect(reinterpret_cast<void*>(p_Address), sizeof(void*), PAGE_READWRITE, &_OldProtection)) {
-        return;
-    }
+    CorePatcher::ApplyData(reinterpret_cast<void*>(p_Address), &p_Hook, sizeof(void*));
+}
 
-    *reinterpret_cast<void**>(p_Address) = reinterpret_cast<void*>(p_Hook);
-
-    g_VirtualProtect(reinterpret_cast<void*>(p_Address), sizeof(void*), _OldProtection, &_OldProtection);
+template <typename O = void*>
+__forceinline void AddVFuncHook(uintptr_t p_Address, void* p_Hook, O* p_Original = nullptr)
+{
+    AddVFuncHook(p_Address, p_Hook, (void**)p_Original);
 }
 
 void InitializeHooks()
@@ -224,8 +222,8 @@ void InitializeFixes()
     //=============================================================
     // Vehicle windows (Damage)
 
-    CorePatcher::NopBytes(0x7080C6, 2);
-    memcpy(reinterpret_cast<void*>(0x7FC330), g_VehicleDamageShader, sizeof(g_VehicleDamageShader));
+    CorePatcher::NopBytes(0x7080C6, 2); // Removes float sign change
+    CorePatcher::ApplyType<void*>(0x708899, g_VehicleDamageShader); // Replace shader address
 }
 
 //==========================================================================
