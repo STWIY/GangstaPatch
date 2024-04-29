@@ -10,7 +10,7 @@
 
 //==========================================================================
 
-#include "Shader/VehicleDamage.hh"
+#include "Shader/VehicleGlass.hh"
 
 //==========================================================================
 // Libs
@@ -69,7 +69,7 @@ void InitializePatches()
     CorePatcher::ApplyBytes(0x5636F6, { 0xE9, 0x4E, 0x01, 0x00, 0x00 });
 
     // Character Camera - Rattle Fix for BarrelCreep Side (Max value)
-    CorePatcher::JmpRel32(0x563CB2, WeaponStateProp::GetBarrelCreepSideMax);
+    CorePatcher::JmpRel32(0x563CB2, WeaponStateProp_GetBarrelCreepSideMax);
 
     //=============================================================
     // FPS Patches
@@ -223,7 +223,7 @@ void InitializeFixes()
     // Vehicle windows (Damage)
 
     CorePatcher::NopBytes(0x7080C6, 2); // Removes float sign change
-    CorePatcher::ApplyType<void*>(0x708899, g_VehicleDamageShader); // Replace shader address
+    CorePatcher::ApplyType<void*>(0x708899, g_VehicleGlassShader); // Replace shader address
 }
 
 //==========================================================================

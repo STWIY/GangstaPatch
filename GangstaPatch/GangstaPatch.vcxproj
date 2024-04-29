@@ -189,7 +189,7 @@
     <ClInclude Include="Hooks\Registry.hh" />
     <ClInclude Include="Hooks\script\ListScreenResolutionEntries.hh" />
     <ClInclude Include="NakedFunctions\GetBarrelCreepSideMax.hh" />
-    <ClInclude Include="Shader\VehicleDamage.hh" />
+    <ClInclude Include="Shader\VehicleGlass.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

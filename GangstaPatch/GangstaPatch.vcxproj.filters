@@ -57,7 +57,7 @@
     <ClInclude Include="NakedFunctions\GetBarrelCreepSideMax.hh">
       <Filter>Project Files\NakedFunctions</Filter>
     </ClInclude>
-    <ClInclude Include="Shader\VehicleDamage.hh">
+    <ClInclude Include="Shader\VehicleGlass.hh">
       <Filter>Project Files\Shader</Filter>
     </ClInclude>
     <ClInclude Include="Hooks\pure3d\VehicleShader.hh">
