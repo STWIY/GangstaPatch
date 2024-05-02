@@ -71,6 +71,9 @@ void InitializePatches()
     // Character Camera - Rattle Fix for BarrelCreep Side (Max value)
     CorePatcher::JmpRel32(0x563CB2, WeaponStateProp_GetBarrelCreepSideMax);
 
+    // renderer::Display_List (Fix culling issues)
+    CorePatcher::ApplyByte(0x45E6E9, 0x3); // Use same cull mode as PS2 (PDDI_CULL_SHADOW_BACKFACE)
+
     //=============================================================
     // FPS Patches
     
