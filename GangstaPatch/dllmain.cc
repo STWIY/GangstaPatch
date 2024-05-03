@@ -72,7 +72,7 @@ void InitializePatches()
     CorePatcher::JmpRel32(0x563CB2, WeaponStateProp_GetBarrelCreepSideMax);
 
     // renderer::Display_List (Fix culling issues)
-    CorePatcher::ApplyByte(0x45E6E9, 0x3); // Use same cull mode as PS2 (PDDI_CULL_SHADOW_BACKFACE)
+    CorePatcher::ApplyByte(0x45E6E9, 0x0); // None cull mode (PS2 uses PDDI_CULL_SHADOW_BACKFACE, but this doesn't exist in PC version)
 
     //=============================================================
     // FPS Patches
