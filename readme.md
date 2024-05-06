@@ -12,10 +12,12 @@
 ## Ini Settings
 ```ini
 [Scarface]
-ShowFPS=0	        ; When set to 1 it will show FPS at left corner.
-SkipLicenseScreen=0	; When set to 1 it will skip license screen while starting up game.
-SkipMovies=0	        ; When set to 1 it will skip intro movies while starting up game.
-DebugMenu=0             ; When set to 1 it will show debug menu item in the pause menu.
+Vibrance=50             ; Adjustable vibrance (1 - 100) (50 -> Default)
+PostProcessFX=0         ; Enables blur & bloom.
+ShowFPS=0	            ; Shows FPS at left corner.
+SkipLicenseScreen=0	    ; Skips license screen while starting up game.
+SkipMovies=0	        ; Skips intro movies while starting up game.
+DebugMenu=0             ; Shows debug option in the pause menu.
 
 [Windowed]
 Mode=0	                ; 0: None, 1: Windowed, 2: Windowed Borderless

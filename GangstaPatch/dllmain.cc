@@ -93,6 +93,13 @@ void InitializePatches()
     //=============================================================
     // Configurable Patches
 
+    int nVibrance = CoreSettings::GetInteger("Scarface", "Vibrance");
+    if (nVibrance)
+    {
+        static float s_VibranceFloat = fmaxf(0.f, fminf((static_cast<float>(nVibrance) * 0.01f), 1.f));
+        CorePatcher::ApplyType<float*>(0x65163E, &s_VibranceFloat);
+    }
+
     if (CoreSettings::GetInteger("Scarface", "ShowFPS")) {
         CorePatcher::NopBytes(0x658E6A, 2);
     }
@@ -168,6 +175,10 @@ void InitializeGlobals()
 
     //=============================================================
     // Configurable Globals
+
+    if (CoreSettings::GetInteger("Scarface", "PostProcessFX")) {
+        *reinterpret_cast<bool*>(0x830A0C) = true;
+    }
 
     if (CoreSettings::GetInteger("Scarface", "DebugMenu"))
     {

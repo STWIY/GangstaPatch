@@ -58,9 +58,19 @@ namespace CorePatcher
 
     bool JmpRel32(uintptr_t p_Address, void* p_Target)
     {
-        uintptr_t _JmpOffset = (reinterpret_cast<uintptr_t>(p_Target) - p_Address - 5);
-        void* _PatchAddress = reinterpret_cast<void*>(p_Address + 0x1);
+        uintptr_t jmpOffset = (reinterpret_cast<uintptr_t>(p_Target) - p_Address - 5);
+        void* pPatchAddress = reinterpret_cast<void*>(p_Address + 0x1);
 
-        return ApplyData(_PatchAddress, &_JmpOffset, sizeof(_JmpOffset));
+        return ApplyData(pPatchAddress, &jmpOffset, sizeof(jmpOffset));
+    }
+
+    bool MakeCallRel32(uintptr_t p_Address, void* p_Target)
+    {
+        return (ApplyByte(p_Address, 0xE8) && JmpRel32(p_Address, p_Target));
+    }
+
+    bool MakeJmpRel32(uintptr_t p_Address, void* p_Target)
+    {
+        return (ApplyByte(p_Address, 0xE9) && JmpRel32(p_Address, p_Target));
     }
 };
