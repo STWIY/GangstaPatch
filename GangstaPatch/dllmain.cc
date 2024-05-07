@@ -176,11 +176,20 @@ void InitializeGlobals()
     //=============================================================
     // Configurable Globals
 
-    if (CoreSettings::GetInteger("Scarface", "PostProcessFX")) {
+    if (CoreSettings::GetInteger("PostProcessFX", "Enable")) 
+    {
         *reinterpret_cast<bool*>(0x830A0C) = true;
+
+        float flBloomValue = static_cast<float>(CoreSettings::GetInteger("PostProcessFX", "Bloom"));
+        if (flBloomValue > 0.f)
+        {
+            flBloomValue = fminf(flBloomValue, 1.f);
+            CorePatcher::ApplyBytes(0x6523E0, { 0xBA, 0x00, 0x00, 0x00, 0x00, 0x90 });
+            CorePatcher::ApplyType<float>(0x6523E1, flBloomValue);
+        }
     }
 
-    if (CoreSettings::GetInteger("Scarface", "DebugMenu"))
+    if (CoreSettings::GetInteger("Patch", "DebugMenu"))
     {
         *reinterpret_cast<bool*>(0x7C1C54) = false; // gReleaseMode
         *reinterpret_cast<bool*>(0x7C1C55) = false; // gFinalMode 
@@ -257,14 +266,14 @@ int __stdcall DllMain(HMODULE p_Module, DWORD p_Reason, void* p_Reserved)
 
         // Setup working directory just in-case...
         {
-            char _CurrentExecutablePath[MAX_PATH];
-            if (GetModuleFileNameA(0, _CurrentExecutablePath, sizeof(_CurrentExecutablePath)))
+            char szCurrentExecutablePath[MAX_PATH];
+            if (GetModuleFileNameA(0, szCurrentExecutablePath, sizeof(szCurrentExecutablePath)))
             {
-                char* _LastDelimer = strrchr(_CurrentExecutablePath, '\\');
-                if (_LastDelimer) 
+                char* pLastDelimer = strrchr(szCurrentExecutablePath, '\\');
+                if (pLastDelimer)
                 {
-                    *_LastDelimer = '\0';
-                    SetCurrentDirectoryA(_CurrentExecutablePath);
+                    *pLastDelimer = '\0';
+                    SetCurrentDirectoryA(szCurrentExecutablePath);
                 }
             }
         }
