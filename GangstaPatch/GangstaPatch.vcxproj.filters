@@ -45,9 +45,6 @@
     <ClInclude Include="Hooks\Registry.hh">
       <Filter>Project Files\Hooks</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks\pure3d\D3DDisplay.hh">
-      <Filter>Project Files\Hooks\pure3d</Filter>
-    </ClInclude>
     <ClInclude Include="Hooks\script\ListScreenResolutionEntries.hh">
       <Filter>Project Files\Hooks\script</Filter>
     </ClInclude>
@@ -62,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="Hooks\pure3d\VehicleShader.hh">
       <Filter>Project Files\Hooks\pure3d</Filter>
+    </ClInclude>
+    <ClInclude Include="NakedFunctions\WindowedBorderless.hh">
+      <Filter>Project Files\NakedFunctions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

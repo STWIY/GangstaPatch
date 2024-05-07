@@ -183,12 +183,12 @@
     <ClInclude Include="3rdParty\MinHook.h" />
     <ClInclude Include="Core\Patcher.hh" />
     <ClInclude Include="Core\Settings.hh" />
-    <ClInclude Include="Hooks\pure3d\D3DDisplay.hh" />
     <ClInclude Include="Hooks\pure3d\OceanRenderer.hh" />
     <ClInclude Include="Hooks\pure3d\VehicleShader.hh" />
     <ClInclude Include="Hooks\Registry.hh" />
     <ClInclude Include="Hooks\script\ListScreenResolutionEntries.hh" />
     <ClInclude Include="NakedFunctions\GetBarrelCreepSideMax.hh" />
+    <ClInclude Include="NakedFunctions\WindowedBorderless.hh" />
     <ClInclude Include="Shader\VehicleGlass.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

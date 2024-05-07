@@ -29,6 +29,7 @@ static decltype(&VirtualProtect) g_VirtualProtect;
 // Naked Functions
 
 #include "NakedFunctions/GetBarrelCreepSideMax.hh"
+#include "NakedFunctions/WindowedBorderless.hh"
 
 //==========================================================================
 // Patches
@@ -97,7 +98,7 @@ void InitializePatches()
     if (nVibrance)
     {
         static float s_VibranceFloat = fmaxf(0.f, fminf((static_cast<float>(nVibrance) * 0.01f), 1.f));
-        CorePatcher::ApplyType<float*>(0x65163E, &s_VibranceFloat);
+        CorePatcher::ApplyType(0x65163E, &s_VibranceFloat);
     }
 
     if (CoreSettings::GetInteger("Scarface", "ShowFPS")) {
@@ -117,7 +118,6 @@ void InitializePatches()
 // Hooks
 
 // pure3d
-#include "Hooks/pure3d/D3DDisplay.hh"
 #include "Hooks/pure3d/OceanRenderer.hh"
 #include "Hooks/pure3d/VehicleShader.hh"
 
@@ -156,7 +156,6 @@ void InitializeHooks()
     AddHook(0x456B10, ScriptHook::ListScreenResolutionEntries);
 
     // pure3d
-    AddHook(0x6545D0, pure3dHook::D3DDisplay::InitDisplay, &pure3dHook::D3DDisplay::g_InitDisplay);
     AddVFuncHook(0x76B790, pure3dHook::OceanRender::UnknownUpdate, &pure3dHook::OceanRender::g_UnknownUpdate);
     AddVFuncHook(0x774D3C, pure3dHook::VehicleShader::UnknownRender, &pure3dHook::VehicleShader::g_UnknownRender);
 
@@ -176,6 +175,16 @@ void InitializeGlobals()
     //=============================================================
     // Configurable Globals
 
+    auto nWindowedMode = static_cast<CoreSettings::eWindowedMode>(CoreSettings::GetInteger("Windowed", "Mode"));
+    if (nWindowedMode != CoreSettings::eWindowedMode_None)
+    {
+        CorePatcher::ApplyType(0x4586F2, pure3d::PDDI_DISPLAY_WINDOW);
+
+        if (nWindowedMode == CoreSettings::eWindowedMode_Borderless) {
+            CorePatcher::MakeJmpRel32(0x45728F, Core_WindowedBorderless); // We don't have enough bytes to patch...
+        }
+    }
+
     if (CoreSettings::GetInteger("PostProcessFX", "Enable")) 
     {
         *reinterpret_cast<bool*>(0x830A0C) = true;
@@ -185,7 +194,7 @@ void InitializeGlobals()
         {
             flBloomValue = fminf(flBloomValue, 1.f);
             CorePatcher::ApplyBytes(0x6523E0, { 0xBA, 0x00, 0x00, 0x00, 0x00, 0x90 });
-            CorePatcher::ApplyType<float>(0x6523E1, flBloomValue);
+            CorePatcher::ApplyType(0x6523E1, flBloomValue);
         }
     }
 
