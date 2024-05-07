@@ -13,15 +13,18 @@
 ```ini
 [Scarface]
 Vibrance=50             ; Adjustable vibrance (1 - 100) (50 -> Default)
-PostProcessFX=0         ; Enables blur & bloom.
-ShowFPS=0	            ; Shows FPS at left corner.
-SkipLicenseScreen=0	    ; Skips license screen while starting up game.
+ShowFPS=0	        ; Shows FPS at left corner.
+SkipLicenseScreen=0	; Skips license screen while starting up game.
 SkipMovies=0	        ; Skips intro movies while starting up game.
-DebugMenu=0             ; Shows debug option in the pause menu.
 
 [Windowed]
 Mode=0	                ; 0: None, 1: Windowed, 2: Windowed Borderless
 
+[PostProcessFX]
+Enable=0                ; Enables blur & bloom.
+Bloom=50                ; The game uses dynamic value, using this option will force the value to be always same
+
 [Patch]
 AffinityMode=0          ; 0: None, 1: All besides core 0 (Might improve performance on Hyper-threaded CPU), 2: Game Handled (Default)
+DebugMenu=0             ; Shows debug option in the pause menu.
 ```
