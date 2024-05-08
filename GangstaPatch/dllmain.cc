@@ -16,7 +16,7 @@
 // Libs
 
 #include "3rdParty/MinHook.h"
-#pragma comment(lib, "MinHook.lib")
+#include "3rdParty/CRT-STL/CRT-STL.hh"
 
 //==========================================================================
 // Core
@@ -264,6 +264,7 @@ int __stdcall DllMain(HMODULE p_Module, DWORD p_Reason, void* p_Reserved)
 {
     if (p_Reason == DLL_PROCESS_ATTACH)
     {
+        CRT::Initialize(); // CRT
         DisableThreadLibraryCalls(p_Module);
 
         if (!SDK::IsGameVersionValid())
