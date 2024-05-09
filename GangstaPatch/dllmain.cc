@@ -72,10 +72,20 @@ void InitializePatches()
     // Character Camera - Rattle Fix for BarrelCreep Side (Max value)
     CorePatcher::JmpRel32(0x563CB2, WeaponStateProp_GetBarrelCreepSideMax);
 
+    //--------------------------------------------------------------
+    // Rendering Patches
+
     // renderer::Display_List (Fix culling issues)
     CorePatcher::ApplyByte(0x45E6E9, 0x0); // None cull mode (PS2 uses PDDI_CULL_SHADOW_BACKFACE, but this doesn't exist in PC version)
 
-    //=============================================================
+    // Fix shadow rendering issue in certain areas
+    // - This might not be proper way to fix this, but there is first list that is rendering always single model which isn't even visible on screen.
+    {
+        CorePatcher::NopBytes(0x45E26A, 2);
+        CorePatcher::ApplyBytes(0x45E270, { 0xE9, 0xAE, 0x00 });
+    }
+
+    //--------------------------------------------------------------
     // FPS Patches
     
     // Ocean (Animation)
@@ -85,13 +95,13 @@ void InitializePatches()
     // - Seems to pass (16ms) as min limit which would be fine for 60 FPS, but running game at higher FPS will cause animations to play at faster speed.
     CorePatcher::ApplyByte(0x40D723, 0x30); // Patches float address to other float address which is small enough for 1000+ FPS
 
-    //=============================================================
+    //--------------------------------------------------------------
     // ActiveMARK (DRM) Patches
 
     // Prevent initializing internet stuff & wont load rasapi32.dll (More info: https://learn.microsoft.com/en-us/windows/win32/api/_rras/)
     CorePatcher::ApplyBytes(0x974395, { 0xB0, 0x01, 0xC3 });
 
-    //=============================================================
+    //--------------------------------------------------------------
     // Configurable Patches
 
     int nVibrance = CoreSettings::GetInteger("Scarface", "Vibrance");
@@ -172,7 +182,7 @@ void InitializeGlobals()
     // Disable hide cursor (Let DInput handle cursor)
     *reinterpret_cast<bool*>(0x7BF728) = false;
 
-    //=============================================================
+    //--------------------------------------------------------------
     // Configurable Globals
 
     auto nWindowedMode = static_cast<CoreSettings::eWindowedMode>(CoreSettings::GetInteger("Windowed", "Mode"));
@@ -212,46 +222,46 @@ void InitializeFixes()
 {
     // Modify NtGlobalFlag
     {
-        DWORD _Peb = __readfsdword(0x30);
+        DWORD dwPeb = __readfsdword(0x30);
 
         //==========================
         // Remove Heap Flags:
         // - FLG_HEAP_VALIDATE_PARAMETERS | FLG_HEAP_ENABLE_FREE_CHECK | FLG_HEAP_ENABLE_TAIL_CHECK
 
-        *reinterpret_cast<ULONG*>(_Peb + 0x68) &= ~(0x00000040 | 0x00000020 | 0x00000010);
+        *reinterpret_cast<ULONG*>(dwPeb + 0x68) &= ~(0x00000040 | 0x00000020 | 0x00000010);
     }
 
     // Modify Heap Flags
     {
-        DWORD _NumHeaps = GetProcessHeaps(0, 0);
-        if (_NumHeaps)
+        DWORD dwNumHeaps = GetProcessHeaps(0, 0);
+        if (dwNumHeaps)
         {
-            HANDLE* _Heaps = new HANDLE[_NumHeaps];
+            HANDLE* pHeaps = new HANDLE[dwNumHeaps];
 
-            if (GetProcessHeaps(_NumHeaps, _Heaps))
+            if (GetProcessHeaps(dwNumHeaps, pHeaps))
             {
-                for (DWORD i = 0; _NumHeaps > i; ++i)
+                for (DWORD i = 0; dwNumHeaps > i; ++i)
                 {
-                    uintptr_t _Heap = reinterpret_cast<uintptr_t>(_Heaps[i]);
+                    uintptr_t uHeap = reinterpret_cast<uintptr_t>(pHeaps[i]);
 
                     //==========================
                     // Remove Flags:
                     // - HEAP_VALIDATE_PARAMETERS_ENABLED | HEAP_FREE_CHECKING_ENABLED | HEAP_TAIL_CHECKING_ENABLED
 
-                    *reinterpret_cast<ULONG*>(_Heap + 0x40) &= ~(0x40000000 | 0x00000040 | 0x00000020);
+                    *reinterpret_cast<ULONG*>(uHeap + 0x40) &= ~(0x40000000 | 0x00000040 | 0x00000020);
 
                     //==========================
                     // Remove (Force Flags)
 
-                    *reinterpret_cast<ULONG*>(_Heap + 0x44) = 0;
+                    *reinterpret_cast<ULONG*>(uHeap + 0x44) = 0;
                 }
             }
 
-            delete[] _Heaps;
+            delete[] pHeaps;
         }
     }
 
-    //=============================================================
+    //--------------------------------------------------------------
     // Vehicle windows (Damage)
 
     CorePatcher::NopBytes(0x7080C6, 2); // Removes float sign change
