@@ -1,9 +1,9 @@
-#pragma once
+#include "../../../Includes.hh"
 
-namespace pure3dHook::VehicleShader
+namespace P3DHook::VehicleShader
 {
 	typedef void(__thiscall* Fn_UnknownRender)(uintptr_t);
-	Fn_UnknownRender g_UnknownRender;
+	void* g_UnknownRender;
 
 	void __fastcall UnknownRender(uintptr_t shader, uintptr_t edx)
 	{
@@ -20,6 +20,6 @@ namespace pure3dHook::VehicleShader
 			}
 		}
 
-		g_UnknownRender(shader);
+		reinterpret_cast<Fn_UnknownRender>(g_UnknownRender)(shader);
 	}
 }

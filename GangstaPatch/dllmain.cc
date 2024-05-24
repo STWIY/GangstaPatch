@@ -1,29 +1,13 @@
 //==========================================================================
 // Includes
 
-#include <cstdint>
-#include <Windows.h>
-#include <d3d9.h>
-#include <sysinfoapi.h>
-
-#include <SDK/.SDK.hh>
+#include "Includes.hh"
+#include "3rdParty/CRT-STL/CRT-STL.hh"
+#include "Core/Hooks.hh"
 
 //==========================================================================
 
 #include "Shader/VehicleGlass.hh"
-
-//==========================================================================
-// Libs
-
-#include "3rdParty/MinHook.h"
-#include "3rdParty/CRT-STL/CRT-STL.hh"
-
-//==========================================================================
-// Core
-
-static decltype(&VirtualProtect) g_VirtualProtect;
-#include "Core/Patcher.hh"
-#include "Core/Settings.hh"
 
 //==========================================================================
 // Naked Functions
@@ -127,52 +111,7 @@ void InitializePatches()
 //==========================================================================
 // Hooks
 
-// pure3d
-#include "Hooks/pure3d/OceanRenderer.hh"
-#include "Hooks/pure3d/VehicleShader.hh"
-
-// script
-#include "Hooks/script/ListScreenResolutionEntries.hh"
-
-// game
-#include "Hooks/Registry.hh"
-
-template <typename H, typename O = void*>
-__forceinline void AddHook(uintptr_t p_Address, H p_Hook, O* p_Original = nullptr)
-{
-    MH_CreateHook(reinterpret_cast<void*>(p_Address), reinterpret_cast<void*>(p_Hook), reinterpret_cast<void**>(p_Original));
-}
-
-void AddVFuncHook(uintptr_t p_Address, void* p_Hook, void** p_Original = nullptr)
-{
-    if (p_Original) {
-        *reinterpret_cast<void**>(p_Original) = *reinterpret_cast<void**>(p_Address);
-    }
-
-    CorePatcher::ApplyData(reinterpret_cast<void*>(p_Address), &p_Hook, sizeof(void*));
-}
-
-template <typename O = void*>
-__forceinline void AddVFuncHook(uintptr_t p_Address, void* p_Hook, O* p_Original = nullptr)
-{
-    AddVFuncHook(p_Address, p_Hook, (void**)p_Original);
-}
-
-void InitializeHooks()
-{
-    MH_Initialize();
-
-    // script
-    AddHook(0x456B10, ScriptHook::ListScreenResolutionEntries);
-
-    // pure3d
-    AddVFuncHook(0x76B790, pure3dHook::OceanRender::UnknownUpdate, &pure3dHook::OceanRender::g_UnknownUpdate);
-    AddVFuncHook(0x774D3C, pure3dHook::VehicleShader::UnknownRender, &pure3dHook::VehicleShader::g_UnknownRender);
-
-    // Registry
-    AddHook(0x456FD0, RegistryHook::SetInteger);
-    AddHook(0x457090, RegistryHook::GetInteger);
-}
+#include "Core/Hooks.hh"
 
 //==========================================================================
 // Globals
@@ -298,12 +237,13 @@ int __stdcall DllMain(HMODULE p_Module, DWORD p_Reason, void* p_Reserved)
             }
         }
 
-        g_VirtualProtect = reinterpret_cast<decltype(&VirtualProtect)>(MH_GetVirtualProtect());
+        CorePatcher::g_VirtualProtect = reinterpret_cast<decltype(&VirtualProtect)>(MH_GetVirtualProtect());
 
         InitializePatches();
-        InitializeHooks();
         InitializeGlobals();
         InitializeFixes();
+
+        Hooks::Initialize();
     }
 
     return 1;

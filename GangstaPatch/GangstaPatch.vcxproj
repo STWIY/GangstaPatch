@@ -190,16 +190,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Hooks\GameObject\ControllerInput.cc" />
+    <ClCompile Include="Core\Hooks\Game\Registry.cc" />
+    <ClCompile Include="Core\Hooks\P3D\OceanRenderer.cc" />
+    <ClCompile Include="Core\Hooks\P3D\VehicleShader.cc" />
+    <ClCompile Include="Core\Hooks\Script\ListScreenResolutionEntries.cc" />
+    <ClCompile Include="Core\Patcher.cc" />
     <ClCompile Include="dllmain.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\MinHook.h" />
+    <ClInclude Include="Core\Hooks.hh" />
     <ClInclude Include="Core\Patcher.hh" />
     <ClInclude Include="Core\Settings.hh" />
-    <ClInclude Include="Hooks\pure3d\OceanRenderer.hh" />
-    <ClInclude Include="Hooks\pure3d\VehicleShader.hh" />
-    <ClInclude Include="Hooks\Registry.hh" />
-    <ClInclude Include="Hooks\script\ListScreenResolutionEntries.hh" />
+    <ClInclude Include="Includes.hh" />
     <ClInclude Include="NakedFunctions\GetBarrelCreepSideMax.hh" />
     <ClInclude Include="NakedFunctions\WindowedBorderless.hh" />
     <ClInclude Include="Shader\VehicleGlass.hh" />

@@ -11,25 +11,49 @@
     <Filter Include="Project Files\Core">
       <UniqueIdentifier>{d09a7281-45ca-40b9-9a55-c062e7a548c3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Project Files\Hooks">
-      <UniqueIdentifier>{91088e9a-0d23-4ec5-8f3a-c68c92a57d32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Project Files\Hooks\pure3d">
-      <UniqueIdentifier>{53dc40cf-fb0a-4108-85bc-1fc2900aeb94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Project Files\Hooks\script">
-      <UniqueIdentifier>{be1af75d-b8ab-44ce-8375-0740c37cf850}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Project Files\NakedFunctions">
       <UniqueIdentifier>{dc2b803b-53a9-447e-822a-44bd18dd4126}</UniqueIdentifier>
     </Filter>
     <Filter Include="Project Files\Shader">
       <UniqueIdentifier>{a1dee8cf-b287-4bf6-9e03-d77ff79de4b9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Project Files\Core\Hooks">
+      <UniqueIdentifier>{91088e9a-0d23-4ec5-8f3a-c68c92a57d32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Core\Hooks\Game">
+      <UniqueIdentifier>{80e89924-41d0-4913-88db-25935a18e7b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Core\Hooks\P3D">
+      <UniqueIdentifier>{53dc40cf-fb0a-4108-85bc-1fc2900aeb94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Core\Hooks\Script">
+      <UniqueIdentifier>{be1af75d-b8ab-44ce-8375-0740c37cf850}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Project Files\Core\Hooks\GameObject">
+      <UniqueIdentifier>{cb188e7f-abc9-4143-b367-ecf4dd14d9dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cc">
       <Filter>Project Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Patcher.cc">
+      <Filter>Project Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Hooks\Script\ListScreenResolutionEntries.cc">
+      <Filter>Project Files\Core\Hooks\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Hooks\P3D\OceanRenderer.cc">
+      <Filter>Project Files\Core\Hooks\P3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Hooks\P3D\VehicleShader.cc">
+      <Filter>Project Files\Core\Hooks\P3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Hooks\Game\Registry.cc">
+      <Filter>Project Files\Core\Hooks\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Hooks\GameObject\ControllerInput.cc">
+      <Filter>Project Files\Core\Hooks\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,26 +66,20 @@
     <ClInclude Include="Core\Patcher.hh">
       <Filter>Project Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks\Registry.hh">
-      <Filter>Project Files\Hooks</Filter>
-    </ClInclude>
-    <ClInclude Include="Hooks\script\ListScreenResolutionEntries.hh">
-      <Filter>Project Files\Hooks\script</Filter>
-    </ClInclude>
-    <ClInclude Include="Hooks\pure3d\OceanRenderer.hh">
-      <Filter>Project Files\Hooks\pure3d</Filter>
-    </ClInclude>
     <ClInclude Include="NakedFunctions\GetBarrelCreepSideMax.hh">
       <Filter>Project Files\NakedFunctions</Filter>
     </ClInclude>
     <ClInclude Include="Shader\VehicleGlass.hh">
       <Filter>Project Files\Shader</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks\pure3d\VehicleShader.hh">
-      <Filter>Project Files\Hooks\pure3d</Filter>
-    </ClInclude>
     <ClInclude Include="NakedFunctions\WindowedBorderless.hh">
       <Filter>Project Files\NakedFunctions</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Hooks.hh">
+      <Filter>Project Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Includes.hh">
+      <Filter>Project Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

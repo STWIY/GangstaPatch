@@ -1,4 +1,4 @@
-#pragma once
+#include "../../../Includes.hh"
 
 namespace RegistryHook
 {
