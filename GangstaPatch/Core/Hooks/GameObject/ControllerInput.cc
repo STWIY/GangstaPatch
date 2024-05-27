@@ -24,6 +24,14 @@ namespace GameObjectHook::ControllerInput
 				p_ControllerInput->mLeftStickX *= 0.25f;
 				p_ControllerInput->mLeftStickY *= 0.25f;
 			}
+
+			if (p_ControllerInput->mDance)
+			{
+				DanceState* pDanceState = DanceState::GetInstance();
+				if (pDanceState && pDanceState->mIsInDanceVolume) {
+					p_ControllerInput->mBlock = 0; // Disable block key when attempting to dance in danceVolume.
+				}
+			}
 		}
 	};
 
