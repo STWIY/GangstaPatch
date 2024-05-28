@@ -18,6 +18,12 @@ jobs:
         platform: [x86]
 
     steps:
+    - name: Checkout other repository
+      uses: actions/checkout@v2
+      with:
+        repository: STWIY/SDK
+        ref: master
+
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -28,7 +34,9 @@ jobs:
 
     - name: Configure and Build
       run: |
+        dir
         mkdir build
         cd build
         cmake -T ClangCL -A Win32 -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} ..
         cmake --build . --config ${{ matrix.configuration }} -j 14
+        
