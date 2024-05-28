@@ -45,4 +45,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: GangstaPatch
-        path: "D:\a\GangstaPatch\GangstaPatch\Release\Release\GangstaPatch.asi"
+        path: D:\a\GangstaPatch\GangstaPatch\Release\Release\GangstaPatch.asi
