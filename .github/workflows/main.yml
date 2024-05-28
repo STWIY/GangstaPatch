@@ -37,4 +37,12 @@ jobs:
         cd build
         cmake -T ClangCL -A Win32 -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} ..
         cmake --build . --config ${{ matrix.configuration }} -j 14
-        
+    - name: ASI
+      run: |
+        mv D:\a\GangstaPatch\GangstaPatch\Release\Release\GangstaPatch.dll D:\a\GangstaPatch\GangstaPatch\Release\Release\GangstaPatch.asi
+   
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: GangstaPatch
+        path: D:\a\GangstaPatch\GangstaPatch\Release\Release\GangstaPatch.asi
