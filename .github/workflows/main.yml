@@ -50,9 +50,17 @@ jobs:
       
     - name: Delete Existing Releases
       run: |
-        for release_id in $(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/STWIY/GangstaPatch/releases | jq -r '.[].id'); do
-          curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/STWIY/GangstaPatch/releases/$release_id
-        done
+        $token = "${{ secrets.GITHUB_TOKEN }}"
+        $uri = "https://api.github.com/repos/STWIY/GangstaPatch/releases"
+        $headers = @{
+          "Authorization" = "token $token"
+        }
+        $releases = Invoke-RestMethod -Uri $uri -Headers $headers
+        foreach ($release in $releases) {
+          $release_id = $release.id
+          Invoke-RestMethod -Uri "https://api.github.com/repos/STWIY/GangstaPatch/releases/$release_id" -Method Delete -Headers $headers
+        }
+      shell: pwsh
         
     - name: Create GitHub Release
       id: create_release
