@@ -82,7 +82,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: build/Release/GangstaPatch.asi
+        asset_path: Release/Release/GangstaPatch.asi
         asset_name: GangstaPatch.asi
         asset_content_type: application/octet-stream
 
