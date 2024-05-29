@@ -41,7 +41,7 @@ jobs:
         
     - name: Determine new tag
       id: set_tag
-      run: echo "::set-output name=TAG::v1.$(( $(git tag --list 'v1.*' | cut -c 4- | sort -rn | head -n1) + 1 ))"
+      run: echo "::set-output name=TAG::v1.$(( $(git tag --list 'v1.*' | ForEach-Object { $_.Substring(2) } | Sort-Object -Descending | Select-Object -First 1) + 1 ))"
 
     - name: Delete last release
       run: |
