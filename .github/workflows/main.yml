@@ -49,7 +49,7 @@ jobs:
         path: build/Release/GangstaPatch.asi
 
     - name: Increment tag number
-      run: echo "NEW_TAG=$((LAST_TAG + 1))" >> $env:GITHUB_ENV
+      run: echo "NEW_TAG=$(( $env:LAST_TAG + 1 ))" >> $env:GITHUB_ENV
 
     - name: Delete Existing Releases
       run: |
