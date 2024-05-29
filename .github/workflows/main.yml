@@ -16,6 +16,11 @@ jobs:
       pull-requests: write
       repository-projects: write
 
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x86]
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -30,33 +35,41 @@ jobs:
         git clone https://github.com/STWIY/SDK.git
         mkdir build
         cd build
-        cmake -T ClangCL -A Win32 -DCMAKE_BUILD_TYPE=Release ..
-        cmake --build . --config Release -j 14
+        cmake -T ClangCL -A Win32 -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} ..
+        cmake --build . --config ${{ matrix.configuration }} -j 14
    
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: GangstaPatch
-        path: build/Release/GangstaPatch.asi
-        
-    - name: Determine new tag
-      id: set_tag
-      run: echo "::set-output name=TAG::v1.$(( $(git tag --list 'v1.*' | ForEach-Object { $_.Substring(2) } | Sort-Object -Descending | Select-Object -First 1) + 1 ))"
+        path: Release/Release/GangstaPatch.asi
 
-    - name: Delete last release
+    - name: Get the current date
+      id: date
+      run: echo "RELEASE_TAG=Release-$((Get-Date).ToString('yyyy-MM-dd'))" >> $env:GITHUB_ENV
+      
+    - name: Delete Existing Releases
       run: |
-        TAG=$(git tag --list 'v1.*' | cut -c 4- | sort -rn | head -n1)
-        RELEASE_ID=$(curl -s -X GET -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/v1.${TAG}" | jq -r .id)
-        curl -s -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}"
-
+        $token = "${{ secrets.GITHUB_TOKEN }}"
+        $uri = "https://api.github.com/repos/STWIY/GangstaPatch/releases"
+        $headers = @{
+          "Authorization" = "token $token"
+        }
+        $releases = Invoke-RestMethod -Uri $uri -Headers $headers
+        foreach ($release in $releases) {
+          $release_id = $release.id
+          Invoke-RestMethod -Uri "https://api.github.com/repos/STWIY/GangstaPatch/releases/$release_id" -Method Delete -Headers $headers
+        }
+      shell: pwsh
+        
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ steps.set_tag.outputs.TAG }}
-        release_name: GangstaPatch ${{ steps.set_tag.outputs.TAG }}
+        tag_name: ${{ env.RELEASE_TAG }}
+        release_name: GangstaPatch ${{ env.RELEASE_TAG }}
         draft: false
         prerelease: false
 
@@ -69,6 +82,3 @@ jobs:
         asset_path: Release/Release/GangstaPatch.asi
         asset_name: GangstaPatch.asi
         asset_content_type: application/octet-stream
-
-    - name: Save last tag number
-      run: echo "${{ steps.set_tag.outputs.TAG }}" > .last_tag
