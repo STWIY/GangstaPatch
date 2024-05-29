@@ -18,9 +18,6 @@ jobs:
         platform: [x86]
 
     steps:
-    - name: Checkout other repository
-      uses: actions/checkout@v2
-
     - name: Checkout repository
       uses: actions/checkout@v2
 
@@ -39,10 +36,14 @@ jobs:
         cmake --build . --config ${{ matrix.configuration }} -j 14
     - name: ASI
       run: |
-        move "..\Release\Release\GangstaPatch.dll" "..\Release\Release\GangstaPatch.asi"
+        dir
+        cd ../Release
+        dir
+        cd Release
+        dir
    
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: GangstaPatch
-        path: ..\Release\Release\GangstaPatch.asi
+        path: ../Release/Release/GangstaPatch.asi
