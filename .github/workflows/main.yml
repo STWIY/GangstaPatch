@@ -43,12 +43,11 @@ jobs:
       id: set_tag
       run: echo "::set-output name=TAG::v1.$(( $(git tag --list 'v1.*' | cut -c 4- | sort -rn | head -n1) + 1 ))"
 
-    - name: Remove last release
-      uses: softprops/delete-release@v1
-      with:
-        owner: ${{ github.repository_owner }}
-        repo: ${{ github.event.repository.name }}
-        tag_name: v1.$(( $(git tag --list 'v1.*' | cut -c 4- | sort -rn | head -n1) ))
+    - name: Delete last release
+      run: |
+        TAG=$(git tag --list 'v1.*' | cut -c 4- | sort -rn | head -n1)
+        RELEASE_ID=$(curl -s -X GET -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/tags/v1.${TAG}" | jq -r .id)
+        curl -s -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "https://api.github.com/repos/${GITHUB_REPOSITORY}/releases/${RELEASE_ID}"
 
     - name: Create GitHub Release
       id: create_release
