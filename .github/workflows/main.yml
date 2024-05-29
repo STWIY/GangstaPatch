@@ -34,16 +34,34 @@ jobs:
         cd build
         cmake -T ClangCL -A Win32 -DCMAKE_BUILD_TYPE=${{ matrix.configuration }} ..
         cmake --build . --config ${{ matrix.configuration }} -j 14
-    - name: ASI
-      run: |
-        dir
-        cd Release
-        dir
-        cd Release
-        dir
    
     - name: Upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: GangstaPatch
         path: Release/Release/GangstaPatch.asi
+
+    - name: Get the current date
+      id: date
+      run: echo "RELEASE_TAG=release-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.RELEASE_TAG }}
+        release_name: GangstaPatch ${{ env.RELEASE_TAG }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: Release/Release/GangstaPatch.asi
+        asset_name: GangstaPatch.asi
+        asset_content_type: application/octet-stream
