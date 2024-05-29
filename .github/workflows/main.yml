@@ -29,7 +29,7 @@ jobs:
       id: get_last_tag
       run: |
         if (-not (Test-Path .last_tag)) {
-          echo "LAST_TAG=0" > .last_tag
+          echo "LAST_TAG=0.0.1" > .last_tag
         } else {
           echo "LAST_TAG=$(Get-Content .last_tag)" >> $env:GITHUB_ENV
         }
@@ -49,6 +49,7 @@ jobs:
         path: build/Release/GangstaPatch.asi
 
     - name: Increment tag number
+      id: increment_tag
       run: |
         # Split the last tag into its components
         $tags = $env:LAST_TAG -split '\.'
@@ -57,7 +58,6 @@ jobs:
         # Join the components back into the tag format
         $new_tag = $tags -join '.'
         echo "NEW_TAG=$new_tag" >> $env:GITHUB_ENV
-
 
     - name: Delete Existing Releases
       run: |
