@@ -43,7 +43,7 @@ jobs:
 
     - name: Get the current date
       id: date
-      run: echo "RELEASE_TAG=release-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+      run: echo "Release_$((Get-Date).ToString('yyyy-MM-dd'))" >> $GITHUB_ENV
 
     - name: Create GitHub Release
       id: create_release
