@@ -28,3 +28,6 @@ Bloom=50                ; The game uses dynamic value, using this option will fo
 AffinityMode=0          ; 0: None, 1: All besides core 0 (Might improve performance on Hyper-threaded CPU), 2: Game Handled (Default)
 DebugMenu=0             ; Shows debug option in the pause menu.
 ```
+
+## Download
+[GangstaPatch](https://github.com/STWIY/GangstaPatch/releases/tag/continuous)
