@@ -25,15 +25,6 @@ jobs:
         choco install -y llvm
         choco install -y cmake
 
-    - name: Get last tag number
-      id: get_last_tag
-      run: |
-        if (-not (Test-Path .last_tag)) {
-          echo "LAST_TAG=0.0.1" > .last_tag
-        } else {
-          echo "LAST_TAG=$(Get-Content .last_tag)" >> $env:GITHUB_ENV
-        }
-
     - name: Configure and Build
       run: |
         git clone https://github.com/STWIY/SDK.git
@@ -47,40 +38,26 @@ jobs:
       with:
         name: GangstaPatch
         path: build/Release/GangstaPatch.asi
-
-    - name: Increment tag number
-      id: increment_tag
-      run: |
-        # Split the last tag into its components
-        $tags = $env:LAST_TAG -split '\.'
-        # Increment the last component
-        $tags[-1] = [int]$tags[-1] + 1
-        # Join the components back into the tag format
-        $new_tag = $tags -join '.'
-        echo "NEW_TAG=$new_tag" >> $env:GITHUB_ENV
-
-    - name: Delete Existing Releases
-      run: |
-        $token = "${{ secrets.GITHUB_TOKEN }}"
-        $uri = "https://api.github.com/repos/STWIY/GangstaPatch/releases"
-        $headers = @{
-          "Authorization" = "token $token"
-        }
-        $releases = Invoke-RestMethod -Uri $uri -Headers $headers
-        foreach ($release in $releases) {
-          $release_id = $release.id
-          Invoke-RestMethod -Uri "https://api.github.com/repos/STWIY/GangstaPatch/releases/$release_id" -Method Delete -Headers $headers
-        }
-      shell: pwsh
         
+    - name: Determine new tag
+      id: set_tag
+      run: echo "::set-output name=TAG::v1.$(( $(git tag --list 'v1.*' | cut -c 4- | sort -rn | head -n1) + 1 ))"
+
+    - name: Remove last release
+      uses: softprops/delete-release@v1
+      with:
+        owner: ${{ github.repository_owner }}
+        repo: ${{ github.event.repository.name }}
+        tag_name: v1.$(( $(git tag --list 'v1.*' | cut -c 4- | sort -rn | head -n1) ))
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.NEW_TAG }}
-        release_name: GangstaPatch ${{ env.NEW_TAG }}
+        tag_name: ${{ steps.set_tag.outputs.TAG }}
+        release_name: GangstaPatch ${{ steps.set_tag.outputs.TAG }}
         draft: false
         prerelease: false
 
@@ -95,4 +72,4 @@ jobs:
         asset_content_type: application/octet-stream
 
     - name: Save last tag number
-      run: echo "${{ env.NEW_TAG }}" > .last_tag
+      run: echo "${{ steps.set_tag.outputs.TAG }}" > .last_tag
