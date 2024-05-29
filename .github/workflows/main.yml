@@ -28,11 +28,12 @@ jobs:
     - name: Get last tag number
       id: get_last_tag
       run: |
-        if not exist .last_tag (
+        if (!(Test-Path .last_tag)) {
           echo "LAST_TAG=0" > .last_tag
-        ) else (
-          echo "LAST_TAG=$(cat .last_tag)" >> $env:GITHUB_ENV
-        )
+        } else {
+          $lastTag = Get-Content .last_tag
+          echo "LAST_TAG=$lastTag" >> $env:GITHUB_ENV
+        }
 
     - name: Configure and Build
       run: |
