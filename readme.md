@@ -39,3 +39,4 @@ DebugMenu=0             ; Shows debug option in the pause menu.
 2. Clone [SDK](https://github.com/STWIY/SDK "SDK").
 3. Edit project properties and change include directory for SDK in `VC++ Directories`.
 4. Build as Release/Debug (x86) and you should get `.asi` file.
+   
