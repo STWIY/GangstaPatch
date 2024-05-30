@@ -43,38 +43,31 @@ jobs:
       with:
         name: GangstaPatch
         path: Release/Release/GangstaPatch.asi
-        
-    - name: Delete Existing Releases
+
+    - name: Get Release ID
+      id: get_release
       run: |
         $token = "${{ secrets.GITHUB_TOKEN }}"
-        $uri = "https://api.github.com/repos/STWIY/GangstaPatch/releases"
-        $headers = @{
-          "Authorization" = "token $token"
-        }
-        $releases = Invoke-RestMethod -Uri $uri -Headers $headers
-        foreach ($release in $releases) {
-          $release_id = $release.id
-          Invoke-RestMethod -Uri "https://api.github.com/repos/STWIY/GangstaPatch/releases/$release_id" -Method Delete -Headers $headers
+        $release = Invoke-RestMethod -Uri "https://api.github.com/repos/STWIY/GangstaPatch/releases/tags/continuous" -Headers @{ Authorization = "token $token" }
+        $release_id = $release.id
+        Write-Host "::set-output name=release_id::$release_id"
+      shell: pwsh
+
+    - name: Delete Existing Asset
+      run: |
+        $token = "${{ secrets.GITHUB_TOKEN }}"
+        $assets = Invoke-RestMethod -Uri "https://api.github.com/repos/STWIY/GangstaPatch/releases/${{ steps.get_release.outputs.release_id }}/assets" -Headers @{ Authorization = "token $token" }
+        foreach ($asset in $assets) {
+          Invoke-RestMethod -Uri "https://api.github.com/repos/STWIY/GangstaPatch/releases/assets/$($asset.id)" -Method Delete -Headers @{ Authorization = "token $token" }
         }
       shell: pwsh
-        
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: continuous
-        release_name: Continuous build
-        draft: false
-        prerelease: false
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: https://uploads.github.com/repos/STWIY/GangstaPatch/releases/${{ steps.get_release.outputs.release_id }}/assets?name=GangstaPatch.asi
         asset_path: Release/Release/GangstaPatch.asi
         asset_name: GangstaPatch.asi
         asset_content_type: application/octet-stream
