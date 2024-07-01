@@ -53,7 +53,9 @@ void InitializePatches()
     ApplyBytes(0x654965, { uint8_t(D3DCREATE_HARDWARE_VERTEXPROCESSING) });
 
     // Change camera nearPlane to fix flickering/z fighting...
-    ApplyType(0x69EB16, 1.f);
+    const float fNearPlane = 1.f;
+    ApplyType(0x69EB16, fNearPlane);
+    ApplyType(0x459D57, fNearPlane);
 
     // Character Camera - Disable blending.
     ApplyBytes(0x5636F6, { 0xE9, 0x4E, 0x01, 0x00, 0x00 });
